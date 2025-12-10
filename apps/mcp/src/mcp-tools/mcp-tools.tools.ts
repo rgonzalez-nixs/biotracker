@@ -1,61 +1,25 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-redundant-type-constituents, @typescript-eslint/no-unsafe-return */
-import {
-  Injectable,
-  Logger
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Tool } from '@rekog/mcp-nest';
 import OpenAI from 'openai';
 import { z } from 'zod';
-
-type BiomarkerInput = z.infer<typeof biomarkerSchema>;
-
-const biomarkerSchema = z.object({
-  name: z.string().describe('Name of the biomarker (e.g., LDL Cholesterol)'),
-  value: z.number().describe('Measured value'),
-  unit: z.string().optional().describe('Measurement unit'),
-  category: z
-    .string()
-    .optional()
-    .describe('Category such as metabolic, cardiovascular, hormonal'),
-  referenceRange: z
-    .object({
-      min: z.number(),
-      max: z.number(),
-    })
-    .optional()
-    .describe('Reference range for this biomarker'),
-  status: z
-    .enum(['normal', 'high', 'low'])
-    .optional()
-    .describe('Interpretation status if already known'),
-});
-
-type AnalyzeInput = {
-  patientId: number;
-  patientName?: string;
-  biomarkers: BiomarkerInput[];
-};
-
-type SuggestInput = z.infer<typeof suggestSchema>;
-
-const suggestSchema = z.object({
-  patientId: z.number().int(),
-  focusCategories: z.array(z.string()).optional(),
-  maxRecommendations: z.number().int().min(1).max(10).default(5),
-  biomarkers: z.array(biomarkerSchema).optional(),
-})
+import {
+  type AnalyzeInput,
+  biomarkerSchema,
+  type SuggestInput,
+  suggestSchema
+} from './mcp-tools.model';
 
 @Injectable()
 export class McpTools {
   private readonly logger = new Logger(McpTools.name);
-  private readonly openai: OpenAI | null =
-    !!process.env.OPENAI_API_KEY?.length
-      ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-      : null;
+  private readonly openai: OpenAI | null = process.env.OPENAI_API_KEY?.length
+    ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    : null;
 
   @Tool({
     name: 'analize_biomarkers',
-    description: 'RGiven patient biomarkers, highlight abnormalities, risk signals, and quick guidance.',
+    description:
+      'RGiven patient biomarkers, highlight abnormalities, risk signals, and quick guidance.',
     parameters: z.object({
       patientId: z.number().int(),
       patientName: z.string().optional(),
@@ -72,7 +36,8 @@ export class McpTools {
 
   @Tool({
     name: 'suggest_monitoring_priorities',
-    description: 'Propose priority biomarkers and follow-up cadence based on categories and current readings.',
+    description:
+      'Propose priority biomarkers and follow-up cadence based on categories and current readings.',
     parameters: suggestSchema,
   })
   async suggestMonitoringPriorities(input: SuggestInput) {
@@ -114,16 +79,15 @@ export class McpTools {
     const focus = input.focusCategories?.length
       ? input.focusCategories.join(', ')
       : 'metabolic, cardiovascular, hormonal';
-    const biomarkerLines =
-      (input.biomarkers?.length)
-        ? input.biomarkers
-          .map((b) => {
-            const cat = b.category ? ` (${b.category})` : '';
-            const status = b.status ? ` [${b.status}]` : '';
-            return `- ${b.name}${cat}: ${b.value}${b.unit ? ' ' + b.unit : ''}${status}`;
-          })
-          .join('\n')
-        : 'None provided';
+    const biomarkerLines = input.biomarkers?.length
+      ? input.biomarkers
+        .map((b) => {
+          const cat = b.category ? ` (${b.category})` : '';
+          const status = b.status ? ` [${b.status}]` : '';
+          return `- ${b.name}${cat}: ${b.value}${b.unit ? ' ' + b.unit : ''}${status}`;
+        })
+        .join('\n')
+      : 'None provided';
 
     return [
       `You are planning monitoring priorities for a patient.`,
