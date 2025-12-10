@@ -87,3 +87,7 @@ Given the project's focus on efficient inter-service communication and data flow
 - Frontend: TanStack Query was utilized for efficient server-state management.
 
 These choices streamlined the implementation of standard features, allowing my development effort to focus on solving complex problems regarding service orchestration and reliable data transmission.
+
+## To be done
+
+As improvement, I believe I should implement a better communication solution between the api and mcp as microservices, to enhance security and simplify data handling.
