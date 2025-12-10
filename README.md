@@ -17,7 +17,14 @@ VITE_MCP_BASE_URL=http://localhost:3030
 add .apps/mcp/.env
 ```
 FRONTEND_URL=http://localhost:5173
+PORT=10100
 OPENAI_API_KEY=<your openai api key>
+```
+
+add .apps/api/.env
+```
+FRONTEND_URL=http://localhost:5173
+PORT=10101
 ```
 
 run:
