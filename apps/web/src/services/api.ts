@@ -1,5 +1,5 @@
-const API = `${import.meta.env.VITE_API_PORT}${import.meta.env.VITE_BE_URL}`;
-const MCP = `${import.meta.env.VITE_MCP_PORT}${import.meta.env.VITE_BE_URL}`;
+const API = `htpps://{import.meta.env.VITE_API_PORT}${import.meta.env.VITE_BE_URL}`;
+const MCP = `htpps://${import.meta.env.VITE_MCP_PORT}${import.meta.env.VITE_BE_URL}`;
 
 export interface Patient {
   id: number;
