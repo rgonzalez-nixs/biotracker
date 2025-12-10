@@ -1,0 +1,21 @@
+# node
+node_modules
+dist
+npm-debug.log*
+pnpm-debug.log*
+
+# env
+.env
+.env.*
+
+# editor
+.DS_Store
+.idea
+*.swp
+.vscode/*
+!.vscode/extensions.json
+
+# coverage
+coverage
+
+

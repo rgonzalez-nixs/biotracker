@@ -1,0 +1,20 @@
+{
+  "name": "biotracker",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run start:dev --workspace @biotracker/api",
+    "dev:mcp": "npm run start:dev --workspace @biotracker/mcp",
+    "dev:web": "npm run dev --workspace @biotracker/web",
+    "build:api": "npm run build --workspace @biotracker/api",
+    "build:mcp": "npm run build --workspace @biotracker/mcp",
+    "build:web": "npm run build --workspace @biotracker/web",
+    "lint:api": "npm run lint --workspace @biotracker/api",
+    "lint:mcp": "npm run lint --workspace @biotracker/mcp",
+    "lint:web": "npm run lint --workspace @biotracker/web"
+  }
+}
+
