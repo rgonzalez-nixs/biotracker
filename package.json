@@ -6,17 +6,18 @@
     "apps/*"
   ],
   "scripts": {
-    "dev:api": "npm run start:dev --workspace @biotracker/api",
-    "dev:mcp": "npm run start:dev --workspace @biotracker/mcp",
-    "dev:web": "npm run dev --workspace @biotracker/web",
-    "build:api": "npm run build --workspace @biotracker/api",
-    "build:mcp": "npm run build --workspace @biotracker/mcp",
-    "build:web": "npm run build --workspace @biotracker/web",
-    "lint:api": "npm run lint --workspace @biotracker/api",
-    "lint:mcp": "npm run lint --workspace @biotracker/mcp",
-    "lint:web": "npm run lint --workspace @biotracker/web",
-    "run:api": "npm run start:prod --workspace @biotracker/api",
-    "run:mcp": "npm run start:prod --workspace @biotracker/mcp"
+    "dev:api": "npm run start:dev -w @biotracker/api",
+    "dev:mcp": "npm run start:dev -w @biotracker/mcp",
+    "dev:web": "npm run dev -w @biotracker/web",
+    "build:api": "npm run build -w @biotracker/api",
+    "build:mcp": "npm run build -w @biotracker/mcp",
+    "build:web": "npm run build -w @biotracker/web",
+    "lint:api": "npm run lint -w @biotracker/api",
+    "lint:mcp": "npm run lint -w @biotracker/mcp",
+    "lint:web": "npm run lint -w @biotracker/web",
+    "run:api": "npm run start:prod -w @biotracker/api",
+    "run:mcp": "npm run start:prod -w @biotracker/mcp",
+    "run:web": "npm run preview -w @biotracker/web"
   }
 }
 
