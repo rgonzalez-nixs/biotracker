@@ -42,10 +42,6 @@ export class BiomarkersSchedulerService {
         updated.push(updatedBiomarker);
       }
     }
-
-    this.logger.log(
-      `Updated ${updated.length} biomarkers for ${new Set(updated.map((b) => b.patientId)).size} patients`,
-    );
   }
 
   private generateRandomValue(biomarker: Biomarker): number {
