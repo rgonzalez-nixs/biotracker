@@ -37,6 +37,10 @@ export class PatientsService {
     },
   ];
 
+  getPatient(id: number): Patient | undefined {
+    return this.patients.find((patient) => patient.id === id);
+  }
+
   getPatients(): Patient[] {
     return this.patients;
   }
