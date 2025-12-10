@@ -1,5 +1,10 @@
-const API = `https://${import.meta.env.VITE_API_PORT}${import.meta.env.VITE_BE_URL}`;
-const MCP = `https://${import.meta.env.VITE_MCP_PORT}${import.meta.env.VITE_BE_URL}`;
+const mode = import.meta.env.MODE;
+const API = mode === 'development'
+  ? `${import.meta.env.VITE_BE_URL}:${import.meta.env.VITE_API_PORT}`
+  : `https://${import.meta.env.VITE_API_PORT}${import.meta.env.VITE_BE_URL}`;
+const MCP = mode === 'development'
+  ? `${import.meta.env.VITE_BE_URL}:${import.meta.env.VITE_MCP_PORT}`
+  : `https://${import.meta.env.VITE_MCP_PORT}${import.meta.env.VITE_BE_URL}`;
 
 export interface Patient {
   id: number;
@@ -25,8 +30,6 @@ export interface Biomarker {
 
 export async function getPatients(): Promise<Patient[]> {
   const response = await fetch(`${API}/api/patients`);
-  console.log({response});
-  
   if (!response.ok) {
     throw new Error('Failed to fetch patients');
   }
@@ -42,14 +45,14 @@ export async function getPatient(id: number): Promise<Patient | undefined> {
 }
 
 export async function getBiomarkers(patientId: number): Promise<Biomarker[]> {
-  const response = await fetch(`${API}/api/patients/${patientId}/biomarkers`);  
+  const response = await fetch(`${API}/api/patients/${patientId}/biomarkers`);
   if (!response.ok) {
     throw new Error('Failed to fetch biomarkers');
   }
   return response.json();
 }
 
-export async function getAiInsights(patientId: number, patientName: string, biomarkers: Biomarker[])  {
+export async function getAiInsights(patientId: number, patientName: string, biomarkers: Biomarker[]) {
   const analysisPromise = fetch(`${MCP}/mcp/analize-biomarkers`, {
     method: 'POST',
     headers: {
@@ -66,8 +69,6 @@ export async function getAiInsights(patientId: number, patientName: string, biom
   });
 
   const responses = await Promise.all([analysisPromise, suggestionsPromise]);
-  console.log('fired');
-  
   if (!responses.every((response) => response.ok)) {
     throw new Error('Failed to fetch biomarkers');
   }
