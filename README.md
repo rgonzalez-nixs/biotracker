@@ -8,6 +8,19 @@ Workspaces managed with npm. Apps live under `apps/`.
 
 ## Getting started
 
+add ./apps/web/.env
+```
+VITE_API_BASE_URL=http://localhost:3000
+VITE_MCP_BASE_URL=http://localhost:3030
+```
+
+add .apps/mcp/.env
+```
+FRONTEND_URL=http://localhost:5173
+OPENAI_API_KEY=<your openai api key>
+```
+
+run:
 ```bash
 npm install
 npm run dev:api    # http://localhost:3000
