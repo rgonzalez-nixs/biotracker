@@ -18,4 +18,10 @@ pnpm-debug.log*
 # coverage
 coverage
 
-
+# build
+index.html
+assets
+vite.svg
+!apps/**/assets/**
+!apps/**/index.html
+!apps/**/vite.svg
