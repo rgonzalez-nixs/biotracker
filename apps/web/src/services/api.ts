@@ -20,7 +20,7 @@ export interface Biomarker {
   status: 'normal' | 'high' | 'low';
 }
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function getPatients(): Promise<Patient[]> {
   const response = await fetch(`${API_BASE_URL}/api/patients`);
@@ -48,7 +48,7 @@ export async function getBiomarkers(patientId: number): Promise<Biomarker[]> {
   return response.json();
 }
 
-const MCP_BASE_URL = 'http://localhost:3030';
+const MCP_BASE_URL = import.meta.env.VITE_MCP_BASE_URL;
 
 export async function getAiInsights(patientId: number, patientName: string, biomarkers: Biomarker[])  {
   const analysisPromise = fetch(`${MCP_BASE_URL}/mcp/analize-biomarkers`, {
@@ -73,11 +73,10 @@ export async function getAiInsights(patientId: number, patientName: string, biom
     throw new Error('Failed to fetch biomarkers');
   }
 
-  const jsonResponses = await Promise.all(responses.map((response) => response.json()));
-  console.log({patientId, patientName, biomarkers, jsonResponses});
-  
-  return jsonResponses.map((response) => ({
-    analysis: response.analysis,
-    suggestions: response.suggestions,
-  }));
+  const [analysisResponse, suggestionsResponse] = await Promise.all(responses.map((response) => response.json()));
+
+  return {
+    analysis: analysisResponse as { text: string; raw: { content: { type: 'text'; text: string }[] }, success: boolean },
+    suggestions: suggestionsResponse as { text: string; raw: { content: { type: 'text'; text: string }[] }, success: boolean },
+  };
 }
