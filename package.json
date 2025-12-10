@@ -14,7 +14,9 @@
     "build:web": "npm run build --workspace @biotracker/web",
     "lint:api": "npm run lint --workspace @biotracker/api",
     "lint:mcp": "npm run lint --workspace @biotracker/mcp",
-    "lint:web": "npm run lint --workspace @biotracker/web"
+    "lint:web": "npm run lint --workspace @biotracker/web",
+    "run:api": "npm run start:prod --workspace @biotracker/api",
+    "run:mcp": "npm run start:prod --workspace @biotracker/mcp"
   }
 }
 
