@@ -23,9 +23,11 @@ function App() {
             <Container size="lg" h="100%">
               <Group h="100%" justify="space-between">
                 <Stack gap={2}>
-                  <Title order={3} component={Link} to="/patients" style={{ textDecoration: 'none', color: 'inherit' }}>
-                    Biotracker
-                  </Title>
+                  <Link to="/patients">
+                    <Title order={3} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      Biotracker
+                    </Title>
+                  </Link>
                   <Text size="sm" c="dimmed">
                     Patient and biomarker tracking system
                   </Text>
