@@ -4,9 +4,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT ?? 3030;
-  // Enable CORS for frontend access
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Default Vite dev server
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   });
   await app.listen(

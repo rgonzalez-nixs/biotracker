@@ -1,3 +1,7 @@
+const PORT = import.meta.env.VITE_PORT;
+const API = `${PORT}${import.meta.env.VITE_API_BASE_URL}`;
+const MCP = `${PORT}${import.meta.env.VITE_MCP_BASE_URL}`;
+
 export interface Patient {
   id: number;
   name: string;
@@ -20,10 +24,8 @@ export interface Biomarker {
   status: 'normal' | 'high' | 'low';
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export async function getPatients(): Promise<Patient[]> {
-  const response = await fetch(`${API_BASE_URL}/api/patients`);
+  const response = await fetch(`${API}/api/patients`);
   console.log({response});
   
   if (!response.ok) {
@@ -33,7 +35,7 @@ export async function getPatients(): Promise<Patient[]> {
 }
 
 export async function getPatient(id: number): Promise<Patient | undefined> {
-  const response = await fetch(`${API_BASE_URL}/api/patients/${id}`);
+  const response = await fetch(`${API}/api/patients/${id}`);
   if (!response.ok) {
     throw new Error('Failed to fetch patients');
   }
@@ -41,24 +43,22 @@ export async function getPatient(id: number): Promise<Patient | undefined> {
 }
 
 export async function getBiomarkers(patientId: number): Promise<Biomarker[]> {
-  const response = await fetch(`${API_BASE_URL}/api/patients/${patientId}/biomarkers`);  
+  const response = await fetch(`${API}/api/patients/${patientId}/biomarkers`);  
   if (!response.ok) {
     throw new Error('Failed to fetch biomarkers');
   }
   return response.json();
 }
 
-const MCP_BASE_URL = import.meta.env.VITE_MCP_BASE_URL;
-
 export async function getAiInsights(patientId: number, patientName: string, biomarkers: Biomarker[])  {
-  const analysisPromise = fetch(`${MCP_BASE_URL}/mcp/analize-biomarkers`, {
+  const analysisPromise = fetch(`${MCP}/mcp/analize-biomarkers`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ patientId, patientName, biomarkers }),
   });
-  const suggestionsPromise = fetch(`${MCP_BASE_URL}/mcp/analize-biomarkers`, {
+  const suggestionsPromise = fetch(`${MCP}/mcp/analize-biomarkers`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

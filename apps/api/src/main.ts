@@ -5,11 +5,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT ?? 3000;
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Default Vite dev server
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   });
   await app.listen(
     port,
-    () => console.log(`MCP server is running on port ${port}`));
+    () => console.log(`API server is running on port ${port}`));
 }
 void bootstrap();
