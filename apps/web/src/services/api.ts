@@ -1,4 +1,4 @@
-const API = `https://{import.meta.env.VITE_API_PORT}${import.meta.env.VITE_BE_URL}`;
+const API = `https://${import.meta.env.VITE_API_PORT}${import.meta.env.VITE_BE_URL}`;
 const MCP = `https://${import.meta.env.VITE_MCP_PORT}${import.meta.env.VITE_BE_URL}`;
 
 export interface Patient {
