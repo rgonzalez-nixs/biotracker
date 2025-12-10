@@ -151,4 +151,33 @@ export class BiomarkersService {
       (bio) => bio.category.toLowerCase() === category.toLowerCase(),
     );
   }
+
+  getAllBiomarkers(): Biomarker[] {
+    return this.biomarkers;
+  }
+
+  updateBiomarkerValue(
+    id: number,
+    newValue: number,
+    measuredAt: string,
+  ): Biomarker | null {
+    const biomarker = this.biomarkers.find((b) => b.id === id);
+    if (!biomarker) {
+      return null;
+    }
+
+    biomarker.value = newValue;
+    biomarker.measuredAt = measuredAt;
+
+    // Recalculate status based on new value
+    if (newValue < biomarker.referenceRange.min) {
+      biomarker.status = 'low';
+    } else if (newValue > biomarker.referenceRange.max) {
+      biomarker.status = 'high';
+    } else {
+      biomarker.status = 'normal';
+    }
+
+    return biomarker;
+  }
 }
