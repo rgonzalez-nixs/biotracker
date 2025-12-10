@@ -1,34 +1,34 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Container,
-  Title,
-  Card,
-  Stack,
-  Text,
-  Loader,
   Alert,
-  Table,
-  Button,
-  Switch,
-  Group,
   Badge,
+  Button,
+  Card,
+  Container,
   Flex,
+  Group,
+  Loader,
   Select,
+  Stack,
+  Switch,
+  Table,
+  Text,
+  Title,
 } from '@mantine/core';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title as ChartTitle,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import { getPatients, getBiomarkers, type Patient, type Biomarker, getPatient } from '../services/api';
 import { useQuery } from '@tanstack/react-query';
+import {
+  CategoryScale,
+  Chart as ChartJS,
+  Title as ChartTitle,
+  Legend,
+  LinearScale,
+  LineElement,
+  PointElement,
+  Tooltip,
+} from 'chart.js';
+import { useMemo, useState } from 'react';
+import { Line } from 'react-chartjs-2';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getAiInsights, getBiomarkers, getPatient } from '../services/api';
 
 ChartJS.register(
   CategoryScale,
@@ -55,6 +55,11 @@ export function PatientDetail() {
     queryFn: () => getBiomarkers(Number(id)),
     refetchInterval: liveUpdates ? 1000 : false,
   });
+  const aiInsights = useQuery({
+    queryKey: ['aiInsights', id],
+    queryFn: () => getAiInsights(Number(id!), patient.data?.name ?? '', biomarkers.data ?? []),
+    enabled: false,
+  });
 
   const loading = patient.isPending || biomarkers.isPending;
 
@@ -67,8 +72,7 @@ export function PatientDetail() {
   );
 
   const handleGetAIInsights = () => {
-    // TODO: Implement AI insights functionality
-    alert('AI Insights feature coming soon!');
+    aiInsights.refetch();
   };
 
   if (loading) {
@@ -256,7 +260,7 @@ export function PatientDetail() {
         <Card withBorder radius="md" padding="lg">
           <Stack gap="md">
             <Title order={4}>Biomarkers Graph</Title>
-            <div style={{ height: '400px', position: 'relative' }}>
+            <div style={{ height: '400px', position: 'relative', width: '100%' }}>
               <Line data={chartData} options={chartOptions} />
             </div>
           </Stack>
