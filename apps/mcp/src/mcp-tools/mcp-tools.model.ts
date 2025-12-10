@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-export type BiomarkerInput = z.infer<typeof biomarkerSchema>;
+export type BiotrackerInput = z.infer<typeof biotrackerSchema>;
 
-export const biomarkerSchema = z.object({
-  name: z.string().describe('Name of the biomarker (e.g., LDL Cholesterol)'),
+export const biotrackerSchema = z.object({
+  name: z.string().describe('Name of the biotracker (e.g., LDL Cholesterol)'),
   value: z.number().describe('Measured value'),
   unit: z.string().optional().describe('Measurement unit'),
   category: z
@@ -16,7 +16,7 @@ export const biomarkerSchema = z.object({
       max: z.number(),
     })
     .optional()
-    .describe('Reference range for this biomarker'),
+    .describe('Reference range for this biotracker'),
   status: z
     .enum(['normal', 'high', 'low'])
     .optional()
@@ -27,7 +27,7 @@ export type AnalyzeInput = z.infer<typeof analyzeSchema>;
 export const analyzeSchema = z.object({
   patientId: z.number().int(),
   patientName: z.string().optional(),
-  biomarkers: z.array(biomarkerSchema).min(1),
+  biotrackers: z.array(biotrackerSchema).min(1),
 });
 
 export type SuggestInput = z.infer<typeof suggestSchema>;
@@ -36,5 +36,5 @@ export const suggestSchema = z.object({
   patientId: z.number().int(),
   focusCategories: z.array(z.string()).optional(),
   maxRecommendations: z.number().int().min(1).max(10).default(5),
-  biomarkers: z.array(biomarkerSchema).optional(),
+  biotrackers: z.array(biotrackerSchema).optional(),
 });

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PatientsModule } from './patients/patients.module';
-import { BiomarkersModule } from './biomarkers/biomarkers.module';
+import { BiotrackersModule } from './biotrackers/biotracker.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    ScheduleModule.forRoot(), PatientsModule, BiomarkersModule],
+    ScheduleModule.forRoot(), PatientsModule, BiotrackersModule],
 })
 export class AppModule {}

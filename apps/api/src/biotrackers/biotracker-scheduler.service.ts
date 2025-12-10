@@ -1,51 +1,51 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { BiomarkersService } from './biomarkers.service';
-import { Biomarker } from './biomarker.model';
+import { BiotrackersService } from './biotracker.service';
+import { Biotracker } from './biotracker.model';
 
 @Injectable()
-export class BiomarkersSchedulerService {
-  private readonly logger = new Logger(BiomarkersSchedulerService.name);
+export class BiotrackersSchedulerService {
+  private readonly logger = new Logger(BiotrackersSchedulerService.name);
 
-  constructor(private readonly biomarkersService: BiomarkersService) {}
+  constructor(private readonly biotrackersService: BiotrackersService) {}
 
   // Run every 3 seconds using cron expression: */3 * * * * * (every 3 seconds)
   // Note: NestJS schedule uses 6-field cron (seconds, minutes, hours, day, month, weekday)
   @Cron('*/1 * * * * *')
-  updateRandomBiomarkers() {
-    const allBiomarkers = this.biomarkersService.getAllBiomarkers();
+  updateRandomBiotrackers() {
+    const allBiotrackers = this.biotrackersService.getAllBiotrackers();
 
-    if (allBiomarkers.length === 0) {
+    if (allBiotrackers.length === 0) {
       return;
     }
 
-    // Randomly select 20-40% of biomarkers to update
+    // Randomly select 20-40% of biotrackers to update
     const updateCount = Math.floor(
-      allBiomarkers.length * (0.2 + Math.random() * 0.2),
+      allBiotrackers.length * (0.2 + Math.random() * 0.2),
     );
-    const shuffled = [...allBiomarkers].sort(() => Math.random() - 0.5);
+    const shuffled = [...allBiotrackers].sort(() => Math.random() - 0.5);
     const toUpdate = shuffled.slice(0, updateCount);
 
-    const updated: Biomarker[] = [];
+    const updated: Biotracker[] = [];
 
-    for (const biomarker of toUpdate) {
-      const newValue = this.generateRandomValue(biomarker);
+    for (const biotracker of toUpdate) {
+      const newValue = this.generateRandomValue(biotracker);
       const measuredAt = new Date().toISOString();
 
-      const updatedBiomarker = this.biomarkersService.updateBiomarkerValue(
-        biomarker.id,
+      const updatedBiotracker = this.biotrackersService.updateBiotrackerValue(
+        biotracker.id,
         newValue,
         measuredAt,
       );
 
-      if (updatedBiomarker) {
-        updated.push(updatedBiomarker);
+      if (updatedBiotracker) {
+        updated.push(updatedBiotracker);
       }
     }
   }
 
-  private generateRandomValue(biomarker: Biomarker): number {
-    const { min, max } = biomarker.referenceRange;
+  private generateRandomValue(biotracker: Biotracker): number {
+    const { min, max } = biotracker.referenceRange;
     const range = max - min;
 
     // Generate value that can be within or outside reference range

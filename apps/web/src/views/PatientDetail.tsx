@@ -30,7 +30,7 @@ import {
 import { useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getAiInsights, getBiomarkers, getPatient } from '../services/api';
+import { getAiInsights, getBiotrackers, getPatient } from '../services/api';
 import Markdown from 'react-markdown';
 
 ChartJS.register(
@@ -53,25 +53,25 @@ export function PatientDetail() {
     queryKey: ['patient', id],
     queryFn: () => getPatient(Number(id!)),
   });
-  const biomarkers = useQuery({
-    queryKey: ['biomarkers', id],
-    queryFn: () => getBiomarkers(Number(id)),
+  const biotrackers = useQuery({
+    queryKey: ['biotrackers', id],
+    queryFn: () => getBiotrackers(Number(id)),
     refetchInterval: liveUpdates ? 1000 : false,
   });
   const aiInsights = useQuery({
     queryKey: ['aiInsights', id],
-    queryFn: () => getAiInsights(Number(id!), patient.data?.name ?? '', biomarkers.data ?? []),
+    queryFn: () => getAiInsights(Number(id!), patient.data?.name ?? '', biotrackers.data ?? []),
     enabled: false,
   });
 
-  const loading = patient.isPending || biomarkers.isPending;
+  const loading = patient.isPending || biotrackers.isPending;
 
   const categories = useMemo(
     () => Array
-      .from(new Set((biomarkers.data ?? []).map((b) => b.category)))
+      .from(new Set((biotrackers.data ?? []).map((b) => b.category)))
       .map((c) => ({ label: c[0].toUpperCase() + c.slice(1), value: c }))
       .sort((a, b) => a.label.localeCompare(b.label)),
-    [biomarkers]
+    [biotrackers]
   );
 
   const analysisContent = aiInsights.data?.analysis
@@ -110,21 +110,21 @@ export function PatientDetail() {
   }
 
   // Prepare chart data
-  const chartData = !biomarkers.data
+  const chartData = !biotrackers.data
     ? { labels: [], datasets: [] }
     : {
-      labels: biomarkers.data.map((b) => b.name),
+      labels: biotrackers.data.map((b) => b.name),
       datasets: [
         {
           label: 'Value',
-          data: biomarkers.data.map((b) => b.value),
+          data: biotrackers.data.map((b) => b.value),
           borderColor: 'rgb(75, 192, 192)',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           tension: 0.1,
         },
         {
           label: 'Reference Min',
-          data: biomarkers.data.map((b) => b.referenceRange.min),
+          data: biotrackers.data.map((b) => b.referenceRange.min),
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderDash: [5, 5],
@@ -132,7 +132,7 @@ export function PatientDetail() {
         },
         {
           label: 'Reference Max',
-          data: biomarkers.data.map((b) => b.referenceRange.max),
+          data: biotrackers.data.map((b) => b.referenceRange.max),
           borderColor: 'rgb(255, 99, 132)',
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderDash: [5, 5],
@@ -149,7 +149,7 @@ export function PatientDetail() {
       },
       title: {
         display: true,
-        text: 'Biomarkers Overview',
+        text: 'Biotrackers Overview',
       },
     },
     scales: {
@@ -276,11 +276,11 @@ export function PatientDetail() {
           </Card>
         )}
 
-        {/* Biomarkers Table */}
-        {biomarkers.data && <Card withBorder radius="md" padding="lg">
+        {/* Biotrackers Table */}
+        {biotrackers.data && <Card withBorder radius="md" padding="lg">
           <Stack gap="md">
             <Flex>
-              <Title order={4} flex={1}>Biomarkers</Title>
+              <Title order={4} flex={1}>Biotrackers</Title>
               <Select
                 data={[
                   { label: 'All', value: '' },
@@ -300,22 +300,22 @@ export function PatientDetail() {
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {biomarkers.data.filter((b) => selectedCategory == '' || b.category === selectedCategory).map((biomarker) => (
-                  <Table.Tr key={biomarker.id}>
-                    <Table.Td>{biomarker.name}</Table.Td>
-                    <Table.Td>{biomarker.value}</Table.Td>
-                    <Table.Td>{biomarker.unit}</Table.Td>
-                    <Table.Td>{biomarker.category}</Table.Td>
+                {biotrackers.data.filter((b) => selectedCategory == '' || b.category === selectedCategory).map((biotracker) => (
+                  <Table.Tr key={biotracker.id}>
+                    <Table.Td>{biotracker.name}</Table.Td>
+                    <Table.Td>{biotracker.value}</Table.Td>
+                    <Table.Td>{biotracker.unit}</Table.Td>
+                    <Table.Td>{biotracker.category}</Table.Td>
                     <Table.Td>
-                      {biomarker.referenceRange.min} - {biomarker.referenceRange.max}
+                      {biotracker.referenceRange.min} - {biotracker.referenceRange.max}
                     </Table.Td>
                     <Table.Td>
-                      <Badge color={getStatusColor(biomarker.status)}>
-                        {biomarker.status}
+                      <Badge color={getStatusColor(biotracker.status)}>
+                        {biotracker.status}
                       </Badge>
                     </Table.Td>
                     <Table.Td>
-                      {new Date(biomarker.measuredAt).toLocaleDateString()}
+                      {new Date(biotracker.measuredAt).toLocaleDateString()}
                     </Table.Td>
                   </Table.Tr>
                 ))}
@@ -324,10 +324,10 @@ export function PatientDetail() {
           </Stack>
         </Card>}
 
-        {/* Biomarkers Graph */}
+        {/* Biotrackers Graph */}
         <Card withBorder radius="md" padding="lg">
           <Stack gap="md">
-            <Title order={4}>Biomarkers Graph</Title>
+            <Title order={4}>Biotrackers Graph</Title>
             <div style={{ height: '400px', position: 'relative', width: '100%' }}>
               <Line data={chartData} options={chartOptions} />
             </div>

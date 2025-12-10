@@ -13,7 +13,7 @@ export interface Patient {
   lastVisit: string;
 }
 
-export interface Biomarker {
+export interface Biotracker {
   id: number;
   patientId: number;
   name: string;
@@ -44,33 +44,33 @@ export async function getPatient(id: number): Promise<Patient | undefined> {
   return response.json();
 }
 
-export async function getBiomarkers(patientId: number): Promise<Biomarker[]> {
-  const response = await fetch(`${API}/api/patients/${patientId}/biomarkers`);
+export async function getBiotrackers(patientId: number): Promise<Biotracker[]> {
+  const response = await fetch(`${API}/api/patients/${patientId}/biotrackers`);
   if (!response.ok) {
-    throw new Error('Failed to fetch biomarkers');
+    throw new Error('Failed to fetch biotrackers');
   }
   return response.json();
 }
 
-export async function getAiInsights(patientId: number, patientName: string, biomarkers: Biomarker[]) {
-  const analysisPromise = fetch(`${MCP}/mcp/analize-biomarkers`, {
+export async function getAiInsights(patientId: number, patientName: string, biotrackers: Biotracker[]) {
+  const analysisPromise = fetch(`${MCP}/mcp/analize-biotrackers`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ patientId, patientName, biomarkers }),
+    body: JSON.stringify({ patientId, patientName, biotrackers }),
   });
-  const suggestionsPromise = fetch(`${MCP}/mcp/analize-biomarkers`, {
+  const suggestionsPromise = fetch(`${MCP}/mcp/analize-biotrackers`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ patientId, patientName, biomarkers }),
+    body: JSON.stringify({ patientId, patientName, biotrackers }),
   });
 
   const responses = await Promise.all([analysisPromise, suggestionsPromise]);
   if (!responses.every((response) => response.ok)) {
-    throw new Error('Failed to fetch biomarkers');
+    throw new Error('Failed to fetch biotrackers');
   }
 
   const [analysisResponse, suggestionsResponse] = await Promise.all(responses.map((response) => response.json()));

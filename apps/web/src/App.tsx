@@ -29,7 +29,7 @@ function App() {
                     </Title>
                   </Link>
                   <Text size="sm" c="dimmed">
-                    Patient and biomarker tracking system
+                    Patient and biotrackers tracking system
                   </Text>
                 </Stack>
                 <Button

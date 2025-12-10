@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 import { z } from 'zod';
 import {
   type AnalyzeInput,
-  biomarkerSchema,
+  biotrackerSchema,
   type SuggestInput,
   suggestSchema
 } from './mcp-tools.model';
@@ -17,16 +17,16 @@ export class McpTools {
     : null;
 
   @Tool({
-    name: 'analize_biomarkers',
+    name: 'analize_biotrackers',
     description:
-      'RGiven patient biomarkers, highlight abnormalities, risk signals, and quick guidance.',
+      'RGiven patient biotrackers, highlight abnormalities, risk signals, and quick guidance.',
     parameters: z.object({
       patientId: z.number().int(),
       patientName: z.string().optional(),
-      biomarkers: z.array(biomarkerSchema).min(1),
+      biotrackers: z.array(biotrackerSchema).min(1),
     }),
   })
-  async analizeBiomarkers(input: AnalyzeInput) {
+  async analizeBiotrackers(input: AnalyzeInput) {
     const prompt = this.buildAnalyzePrompt(input);
     const text = await this.runPrompt(prompt);
     return {
@@ -37,7 +37,7 @@ export class McpTools {
   @Tool({
     name: 'suggest_monitoring_priorities',
     description:
-      'Propose priority biomarkers and follow-up cadence based on categories and current readings.',
+      'Propose priority biotrackers and follow-up cadence based on categories and current readings.',
     parameters: suggestSchema,
   })
   async suggestMonitoringPriorities(input: SuggestInput) {
@@ -49,7 +49,7 @@ export class McpTools {
   }
 
   private buildAnalyzePrompt(input: AnalyzeInput): string {
-    const lines = input.biomarkers
+    const lines = input.biotrackers
       .map((b) => {
         const range = b.referenceRange
           ? ` (ref ${b.referenceRange.min}-${b.referenceRange.max})`
@@ -61,10 +61,10 @@ export class McpTools {
       .join('\n');
 
     return [
-      `You are a clinical data assistant summarizing biomarker panels.`,
+      `You are a clinical data assistant summarizing biotracker panels.`,
       `Patient ID: ${input.patientId}`,
       input.patientName ? `Patient Name: ${input.patientName}` : '',
-      `Biomarkers:\n${lines}`,
+      `Biotrackers:\n${lines}`,
       `Tasks:`,
       `1) Identify highs/lows and notable patterns.`,
       `2) Mention likely clinical significance briefly.`,
@@ -79,8 +79,8 @@ export class McpTools {
     const focus = input.focusCategories?.length
       ? input.focusCategories.join(', ')
       : 'metabolic, cardiovascular, hormonal';
-    const biomarkerLines = input.biomarkers?.length
-      ? input.biomarkers
+    const biotrackerLines = input.biotrackers?.length
+      ? input.biotrackers
         .map((b) => {
           const cat = b.category ? ` (${b.category})` : '';
           const status = b.status ? ` [${b.status}]` : '';
@@ -93,7 +93,7 @@ export class McpTools {
       `You are planning monitoring priorities for a patient.`,
       `Patient ID: ${input.patientId}`,
       `Focus categories: ${focus}`,
-      `Biomarkers:\n${biomarkerLines}`,
+      `Biotrackers:\n${biotrackerLines}`,
       `Return up to ${input.maxRecommendations ?? 5} prioritized recommendations.`,
       `Each item: what to monitor, suggested cadence, and rationale in 1 sentence.`,
       `Keep total response under 150 words.`,

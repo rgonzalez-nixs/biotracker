@@ -1,4 +1,4 @@
-export interface Biomarker {
+export interface Biotracker {
   id: number;
   patientId: number;
   name: string;

@@ -6,9 +6,9 @@ import { McpTools } from './mcp-tools.tools';
 export class McpToolsController {
     constructor(private readonly mcpTools: McpTools) { }
 
-    @Post('analize-biomarkers')
+    @Post('analize-biotrackers')
     @HttpCode(HttpStatus.OK)
-    async analizeBiomarkers(@Body() body: unknown) {
+    async analizeBiotrackers(@Body() body: unknown) {
         const validated = analyzeSchema.safeParse(body);
         if (!validated.success) {
             return {
@@ -16,7 +16,7 @@ export class McpToolsController {
                 error: validated.error.message,
             };
         }
-        const result = await this.mcpTools.analizeBiomarkers(validated.data);
+        const result = await this.mcpTools.analizeBiotrackers(validated.data);
         const textContent =
             result.content?.[0]?.type === 'text'
                 ? result.content[0].text

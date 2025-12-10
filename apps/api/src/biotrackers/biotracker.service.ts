@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Biomarker } from './biomarker.model';
+import { Biotracker } from './biotracker.model';
 
 type Template = Omit<
-  Biomarker,
+  Biotracker,
   'id' | 'patientId' | 'value' | 'status' | 'measuredAt'
 >;
 
 @Injectable()
-export class BiomarkersService {
-  // In-memory seed data for demo purposes: 5 patients x 15 biomarkers each
-  private readonly biomarkers: Biomarker[] = this.buildBiomarkers();
+export class BiotrackersService {
+  // In-memory seed data for demo purposes: 5 patients x 15 biotrackers each
+  private readonly biotrackers: Biotracker[] = this.buildBiotrackers();
 
-  private buildBiomarkers(): Biomarker[] {
+  private buildBiotrackers(): Biotracker[] {
     const templates: Template[] = [
       {
         name: 'Glucose (fasting)',
@@ -105,7 +105,7 @@ export class BiomarkersService {
       },
     ];
 
-    const biomarkers: Biomarker[] = [];
+    const biotrackers: Biotracker[] = [];
     let id = 100;
 
     for (let patientId = 1; patientId <= 5; patientId += 1) {
@@ -123,7 +123,7 @@ export class BiomarkersService {
               ? 'high'
               : 'normal';
 
-        biomarkers.push({
+        biotrackers.push({
           id: ++id,
           patientId,
           name: template.name,
@@ -137,11 +137,11 @@ export class BiomarkersService {
       });
     }
 
-    return biomarkers;
+    return biotrackers;
   }
 
-  getBiomarkers(patientId: number, category?: string): Biomarker[] {
-    const scoped = this.biomarkers.filter((bio) => bio.patientId === patientId);
+  getBiotrackers(patientId: number, category?: string): Biotracker[] {
+    const scoped = this.biotrackers.filter((bio) => bio.patientId === patientId);
 
     if (!category) {
       return scoped;
@@ -152,32 +152,32 @@ export class BiomarkersService {
     );
   }
 
-  getAllBiomarkers(): Biomarker[] {
-    return this.biomarkers;
+  getAllBiotrackers(): Biotracker[] {
+    return this.biotrackers;
   }
 
-  updateBiomarkerValue(
+  updateBiotrackerValue(
     id: number,
     newValue: number,
     measuredAt: string,
-  ): Biomarker | null {
-    const biomarker = this.biomarkers.find((b) => b.id === id);
-    if (!biomarker) {
+  ): Biotracker | null {
+    const biotracker = this.biotrackers.find((b) => b.id === id);
+    if (!biotracker) {
       return null;
     }
 
-    biomarker.value = newValue;
-    biomarker.measuredAt = measuredAt;
+    biotracker.value = newValue;
+    biotracker.measuredAt = measuredAt;
 
     // Recalculate status based on new value
-    if (newValue < biomarker.referenceRange.min) {
-      biomarker.status = 'low';
-    } else if (newValue > biomarker.referenceRange.max) {
-      biomarker.status = 'high';
+    if (newValue < biotracker.referenceRange.min) {
+      biotracker.status = 'low';
+    } else if (newValue > biotracker.referenceRange.max) {
+      biotracker.status = 'high';
     } else {
-      biomarker.status = 'normal';
+      biotracker.status = 'normal';
     }
 
-    return biomarker;
+    return biotracker;
   }
 }
