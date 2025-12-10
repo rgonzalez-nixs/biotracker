@@ -13,6 +13,8 @@ import {
   Table,
   Text,
   Title,
+  Divider,
+  Paper,
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -29,6 +31,7 @@ import { useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAiInsights, getBiomarkers, getPatient } from '../services/api';
+import Markdown from 'react-markdown';
 
 ChartJS.register(
   CategoryScale,
@@ -70,6 +73,13 @@ export function PatientDetail() {
       .sort((a, b) => a.label.localeCompare(b.label)),
     [biomarkers]
   );
+
+  const analysisContent = aiInsights.data?.analysis
+    ? aiInsights.data.analysis.text
+    : null;
+  const suggestionsContent = aiInsights.data?.suggestions
+    ? aiInsights.data.suggestions.text
+    : null;
 
   const handleGetAIInsights = () => {
     aiInsights.refetch();
@@ -204,9 +214,67 @@ export function PatientDetail() {
               checked={liveUpdates}
               onChange={(e) => setLiveUpdates(e.currentTarget.checked)}
             />
-            <Button onClick={handleGetAIInsights}>Get AI Insights</Button>
+            <Button
+              onClick={handleGetAIInsights}
+              loading={aiInsights.isFetching}
+            >
+              Get AI Insights
+            </Button>
           </Group>
         </Card>
+
+        {/* AI Insights */}
+        {(aiInsights.data || aiInsights.isFetching || aiInsights.error) && (
+          <Card withBorder radius="md" padding="lg">
+            <Stack gap="md">
+              <Title order={4}>AI Insights</Title>
+              {aiInsights.isFetching ? (
+                <Group justify="center" p="xl">
+                  <Loader size="sm" />
+                  <Text size="sm" c="dimmed">Generating insights...</Text>
+                </Group>
+              ) : aiInsights.error ? (
+                <Alert color="red" title="Error">
+                  {aiInsights.error instanceof Error
+                    ? aiInsights.error.message
+                    : 'Failed to load AI insights'}
+                </Alert>
+              ) : aiInsights.data && aiInsights.data.analysis && aiInsights.data.suggestions ? (
+                <Stack gap="lg">
+                  <Paper p="md" withBorder radius="sm">
+                    <Stack gap="sm">
+                      {analysisContent && (
+                        <>
+                          <Title order={5}>Analysis</Title>
+                          <Markdown >
+                            {typeof analysisContent === 'string'
+                              ? analysisContent
+                              : JSON.stringify(analysisContent, null, 2)}
+                          </Markdown>
+                        </>
+                      )}
+                      {suggestionsContent && (
+                        <>
+                          {analysisContent && <Divider />}
+                          <Title order={5}>Suggestions</Title>
+                          <Markdown >
+                            {typeof suggestionsContent === 'string'
+                              ? suggestionsContent
+                              : JSON.stringify(suggestionsContent, null, 2)}
+                          </Markdown>
+                        </>
+                      )}
+                    </Stack>
+                  </Paper>
+                </Stack>
+              ) : (
+                <Text size="sm" c="dimmed">
+                  No insights available. Click "Get AI Insights" to generate insights.
+                </Text>
+              )}
+            </Stack>
+          </Card>
+        )}
 
         {/* Biomarkers Table */}
         {biomarkers.data && <Card withBorder radius="md" padding="lg">
