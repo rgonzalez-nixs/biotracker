@@ -91,3 +91,7 @@ These choices streamlined the implementation of standard features, allowing my d
 ## To be done
 
 As improvement, I believe I should implement a better communication solution between the api and mcp as microservices, to enhance security and simplify data handling.
+
+## Used tools
+
+Claude Sonnet 4.5 for project boilerplate and structure, and Gemini 3 for cross prompting and research.
